@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
@@ -31,8 +31,6 @@ function App() {
 	const addRoute = (route: AppRoute) => (
 		<Route key={route.key} path={route.path} component={route.component || PageDefault} exact />
 	);
-
-	console.log(parsing('react'));
 
 	return (
 		//전역상태 관리
