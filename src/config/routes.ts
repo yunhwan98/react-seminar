@@ -12,6 +12,7 @@ import {
 } from '@mui/icons-material';
 
 import { Home } from '../pages/Home';
+import Main from '../pages/Main';
 
 import { Route } from '../types/Route';
 
@@ -25,6 +26,16 @@ const routes: Array<Route> = [
 		isEnabled: true,
 		icon: HomeIcon,
 		appendDivider: true,
+	},
+	{
+		key: 'router-main',
+		title: 'Main',
+		description: 'Main',
+		component: Main,
+		path: '/main',
+		isEnabled: true,
+		// icon: HomeIcon,
+		// appendDivider: true,
 	},
 	{
 		key: 'router-dashboard',
