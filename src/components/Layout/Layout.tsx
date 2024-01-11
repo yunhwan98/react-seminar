@@ -8,6 +8,7 @@ import { Header } from '../Header';
 import { Footer } from '../Footer';
 
 import { FOOTER_HEIGHT } from '../../utils/constants';
+import { Outlet } from 'react-router-dom';
 
 export const Layout: FC = ({ children }) => {
 	const [open, setOpen] = useState(false);
@@ -30,7 +31,7 @@ export const Layout: FC = ({ children }) => {
 				</Box>
 				<Navigation open={open} handleClose={toggleNavigation} />
 				<Box component='main' sx={{ flexGrow: 1, p: 3, pt: 10 }}>
-					{children}
+					<Outlet />
 				</Box>
 			</div>
 			<Box component='footer'>
