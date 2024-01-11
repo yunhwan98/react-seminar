@@ -1,22 +1,16 @@
 import axios from 'axios';
 import cheerio, { Element } from 'cheerio';
+import { v4 as uuidv4 } from 'uuid';
 
 const getHTML = async (keyword: string, site: string) => {
 	//axios.defaults.withCredentials = true;
 	try {
 		if (site === 'inflearn') {
 			return await axios.get('/inflearn/courses?s=' + keyword);
-		} else if (site === 'fastcampus') {
-			//return await axios.get('/fastcampus');
-			//return await axios.get('/fastcampus/search?keyword=' + keyword);
-			return await axios.get('https://fastcampus.co.kr/search?keyword=' + keyword);
-		} else if (site === 'codeit') {
-			return await axios.get(`/codeit/search?q=${keyword}&filter=path`);
-			//return await axios.get(`/codeit`);
 		} else if (site === 'nomad') {
 			return await axios.get(`/nomad/courses`);
-		} else if (site === 'goorm') {
-			return await axios.get(`/goorm/search?subject=` + keyword);
+		} else if (site === 'top') {
+			return await axios.get(`/inflearn/tag-curation/common_tag/business-top-50`);
 		}
 	} catch (err) {
 		console.log(err);
@@ -34,20 +28,15 @@ export const parsing = async (keyword: string, site: string) => {
 
 		$courseList.each((idx, node) => {
 			courses.push({
-				title: $(node).find('.course_title').text(),
+				id: uuidv4(),
+				title: $(node).find('.course_title:eq(0)').text(),
 				instructor: $(node).find('.instructor').text(),
 				price: $(node).find('.price').text(),
-				rating: $(node).find('.star_solid').css('width'),
+				rating: $(node).find('.star_solid').css('width') || '0%',
 				img: $(node).find('.card-image > figure > img').attr('src'),
 			});
 		});
-	} else if (site === 'fastcampus') {
-		const $ = cheerio.load(html!.data);
-		const $courseList = $('.footer__link-list-divider');
-		//const $courseList = $('.card__container');
-	} else if (site === 'codeit') {
-		const $ = cheerio.load(html!.data);
-		const $courseList = $('.CommonExploreItem_container__cVwD4');
+		//console.log(courses);
 	} else if (site === 'nomad') {
 		const $ = cheerio.load(html!.data);
 		const $courseList = $('.sc-ceea8847-0');
@@ -56,29 +45,33 @@ export const parsing = async (keyword: string, site: string) => {
 			let start = str.indexOf('srcSet=') + 8;
 			let end = str.indexOf('g&') + 2;
 			let url = str.slice(start, end) + 'w=640&q=75';
-
 			return url;
 		};
 		$courseList.each((idx, node) => {
 			courses.push({
+				id: uuidv4(),
 				title: $(node).find('h3').text(),
 				content: $(node).find('h4').text(),
 				img: 'https://nomadcoders.co' + getUrl('' + $(node).find('noscript')),
+				instructor: '노마드코더',
 			});
 			getUrl('' + $(node).find('noscript'));
 		});
-	} else if (site === 'goorm') {
+	} else if (site === 'top') {
 		const $ = cheerio.load(html!.data);
-		// const $courseList = $('.sc-ceea8847-0');
-		// $courseList.each((idx, node) => {
-		// 	courses.push({
-		// 		title: $(node).find('h3').text(),
-		// 		content: $(node).find('h4').text(),
-		// 		img: '/nomad/' + $(node).find('.xx > span > img').attr('src'),
-		// 	});
-		// });
-		// console.log(courses);
-	}
+		const $courseList = $('.course-card-wrapper');
 
+		//console.log($courseList);
+		$courseList.each((idx, node) => {
+			courses.push({
+				id: uuidv4(),
+				title: $(node).find('.course-card__title:eq(0)').text(),
+				instructor: $(node).find('.course-card__instructor').text(),
+				price: $(node).find('.course-card__price > dd').text(),
+				rating: $(node).find('.course-card__star > dd > span').text().slice(0, 3) || '0%',
+				img: $(node).find('img').attr('src'),
+			});
+		});
+	}
 	return courses;
 };
