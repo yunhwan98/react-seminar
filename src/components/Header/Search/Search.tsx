@@ -1,18 +1,44 @@
 import { alpha, InputBase, styled, Box } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export const Search = () => (
-	<Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
-		<SearchWrapper>
-			<SearchIconWrapper>
-				<SearchIcon />
-			</SearchIconWrapper>
-			<StyledInputBase placeholder='Search…' inputProps={{ 'aria-label': 'search' }} />
-		</SearchWrapper>
-	</Box>
-);
+const SearchButton = styled('button')(({ theme }) => ({
+	border: 0,
+	backgroundColor: 'transparent',
+}));
+
+export const Search = () => {
+	const [keyword, setKeyword] = useState('');
+	const navigate = useNavigate();
+
+	const keywordHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		setKeyword(e.target.value);
+		console.log(e.target.value);
+	};
+
+	return (
+		<Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+			<SearchWrapper>
+				<StyledInputBase
+					placeholder='검색어를 입력해주세요...'
+					inputProps={{ 'aria-label': 'search' }}
+					onChange={keywordHandler}
+				/>
+				<SearchButton
+					onClick={() => {
+						navigate(`/search?keyword=${keyword}`);
+					}}
+				>
+					<SearchIcon />
+				</SearchButton>
+			</SearchWrapper>
+		</Box>
+	);
+};
 
 const SearchWrapper = styled('div')(({ theme }) => ({
+	display: 'flex',
 	position: 'relative',
 	borderRadius: theme.shape.borderRadius,
 	backgroundColor: alpha(theme.palette.common.white, 0.15),
